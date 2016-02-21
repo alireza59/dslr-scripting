@@ -1,0 +1,52 @@
+# HDR 11 #
+
+```
+#name: HDR 11
+#desc: 11 images with different exposure bias compensation
+#author: kopper
+
+program=getExposureProgramMode()
+while program != "P" && program != "A" && program != "S"
+    message("Set 'P' or 'A' or 'S' mode and press 'OK'")
+    program=getExposureProgramMode()
+endwhile
+
+afMode=getAFModeSelect()
+biasCompensation=getExposureBiasCompensation()
+enableBracketing=getEnableBracketing()
+
+values=arrayCreate( ...
+        "0", ...
+        "+1", ...
+        "-1", ...
+        "+2", ...
+        "-2", ...
+        "+3", ...
+        "-3", ...
+        "+4", ...
+        "-4", ...
+        "+5", ...
+        "-5")
+
+setEnableBracketing(0) #disable bracketing
+
+if afMode!="MF[f]"  #init focus
+    setAFModeSelect("AF-S")
+    performAF()
+    setAFModeSelect("MF")
+endif
+
+while a < arraySize(values)
+    setExposureBiasCompensation(arrayGet(values,a))
+    capture()
+    a=a+1
+endwhile
+
+if afMode!="MF[f]"
+    setAFModeSelect(afMode)
+endif
+setExposureBiasCompensation(biasCompensation)
+setEnableBracketing(enableBracketing)
+
+log("Created...")
+```
